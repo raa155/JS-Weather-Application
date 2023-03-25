@@ -14,6 +14,7 @@ let geolocationApiUrl = '';
 
 // Fetch GeoLocation Information based off the city entered by user. 
 const getGeoLocation = async () => {
+   
    // Get GeoLocation of city
    try {
       const response = await fetch(geolocationApiUrl);
@@ -46,15 +47,23 @@ const getWeather = async (lon, lat) => {
 const displayWeather = (weatherData) => {
    //create Weather Div
    const container = document.createElement('div');
+   container.classList.add('weather-results-container')
+   //create styling container div
+   const stylingContainer = document.createElement('div');
+   stylingContainer.classList.add('styling-weather-results-container');
    //create City Title
    const title = document.createElement('h2');
    title.textContent = `Location: ${weatherData.name}, ${weatherData.sys.country}`;
+   //create divider
+   const divider = document.createElement('span');
+   divider.innerHTML = "<br>"
+   divider.classList.add('divider');
    //create City temp
    const temp = document.createElement('p');
    temp.textContent = `Temperature: °${Math.floor(weatherData.main.temp)} Farenheit`;
    // Create City Feels Like Temp Element
    const feelsLike = document.createElement('p');
-   feelsLike.textContent = `Temperature Feels Like: °${Math.floor(weatherData.main.feels_like)} Farenheit`;
+   feelsLike.textContent = `Feels Like: °${Math.floor(weatherData.main.feels_like)} Farenheit`;
    // Create City Weather Condition
    const weatherCondition = document.createElement('p');
    weatherCondition.textContent = `Weather Condition: ${weatherData.weather[0].description}`;
@@ -66,12 +75,14 @@ const displayWeather = (weatherData) => {
    Humidity.textContent = `Humidity: ${weatherData.main.humidity}%`;
    // Add the Elements inside container Element
    weatherContainer.appendChild(container);
-   container.appendChild(title);
-   container.appendChild(temp);
-   container.appendChild(feelsLike);
-   container.appendChild(weatherCondition);
-   container.appendChild(windSpeed);
-   container.appendChild(Humidity);
+   container.appendChild(stylingContainer);
+   stylingContainer.appendChild(title);
+   stylingContainer.appendChild(divider);
+   stylingContainer.appendChild(temp);
+   stylingContainer.appendChild(feelsLike);
+   stylingContainer.appendChild(weatherCondition);
+   stylingContainer.appendChild(windSpeed);
+   stylingContainer.appendChild(Humidity);
 
 }
 
@@ -83,7 +94,8 @@ const displayError = () => {
 
 // Event Listeners 
 button?.addEventListener('click', () => {
+
    const city = input.value;
-   geolocationApiUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=5&appid=${apiKey}&units=imperial`;
+   geolocationApiUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${city}&sort=population&limit=5&appid=${apiKey}&units=imperial`;
    getGeoLocation();
 })
