@@ -4,17 +4,53 @@
 const input = document.getElementById('search');
 const button = document.getElementById('searchButton');
 const weatherContainer = document.getElementById('weather-container');
-
+let container = document.createElement('div');
 
 // Global Variables
 const apiKey = '4be0cf04eed25e997c6aed659cc1d3d3';
+const googleApiKey = 'AIzaSyDIDISCV_kKELLLvZrUg8ReJTTrpLtdtQY';
 let geolocationApiUrl = '';
+
+// Get Picture from Google API Place and return a src
+const getCityPictures = async (city) => {
+   try {
+      const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+      const googleApiUrl = `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=${city}&key=${googleApiKey}&inputtype=textquery&fields=name,photos`
+      const response = await fetch(proxyUrl + googleApiUrl);
+      const data = await response.json();
+      return data.candidates[0].photos[0].photo_reference;
+      
+   } catch (error) {
+      console.log(error);
+   }
+}
+
+// Get src from photoReference
+
+const getPictureSrc = async () => {
+   try {
+      let reference = await getCityPictures('london');
+      console.log(reference)
+      const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+      const googleSrcUrl = `https://maps.googleapis.com/maps/api/place/photo?photoreference=${reference}&key=${googleApiKey}&maxwidth=400&maxheight=400`;
+      console.log(proxyUrl + googleSrcUrl);
+      const response = await fetch(proxyUrl + googleSrcUrl);
+      const img = document.createElement('img');
+      img.setAttribute('src', response);
+      
+   } catch (error) {
+       console.log(error)
+   }
+      
+}
+
+
 
 
 
 // Fetch GeoLocation Information based off the city entered by user. 
 const getGeoLocation = async () => {
-   
+   container.remove();
    // Get GeoLocation of city
    try {
       const response = await fetch(geolocationApiUrl);
@@ -46,18 +82,14 @@ const getWeather = async (lon, lat) => {
 //Display Weather Information
 const displayWeather = (weatherData) => {
    //create Weather Div
-   const container = document.createElement('div');
+   container = document.createElement('div');
    container.classList.add('weather-results-container')
    //create styling container div
    const stylingContainer = document.createElement('div');
    stylingContainer.classList.add('styling-weather-results-container');
    //create City Title
    const title = document.createElement('h2');
-   title.textContent = `Location: ${weatherData.name}, ${weatherData.sys.country}`;
-   //create divider
-   const divider = document.createElement('span');
-   divider.innerHTML = "<br>"
-   divider.classList.add('divider');
+   title.textContent = `${weatherData.name}, ${weatherData.sys.country}`;
    //create City temp
    const temp = document.createElement('p');
    temp.textContent = `Temperature: °${Math.floor(weatherData.main.temp)} Farenheit`;
@@ -73,11 +105,28 @@ const displayWeather = (weatherData) => {
    // Create City Humidity Condition Element
    const Humidity = document.createElement('p');
    Humidity.textContent = `Humidity: ${weatherData.main.humidity}%`;
+   // create Img Element Depending if the weather condition includes one of the following keywords
+   const weatherImg = document.createElement('img');
+   weatherImg.classList.add('weather-img')
+
+   if (weatherData.weather[0].description.includes('sun')) {
+      weatherImg.setAttribute('src', '/img/sun.gif')
+   } else if (weatherData.weather[0].description.includes('snow')) {
+      weatherImg.setAttribute('src', '/img/snow.gif')
+   } else if (weatherData.weather[0].description.includes('clouds')) {
+      weatherImg.setAttribute('src', '/img/clouds.gif')
+   } else if (weatherData.weather[0].description.includes('rain')) {
+      weatherImg.setAttribute('src', '/img/rain.gif')
+   } else if (weatherData.weather[0].description.includes('clear')) {
+      weatherImg.setAttribute('src', '/img/clearsky.png')
+   } else if (weatherData.weather[0].description.includes('mist')) {
+      weatherImg.setAttribute('src', '/img/mist.gif')
+   } 
    // Add the Elements inside container Element
    weatherContainer.appendChild(container);
    container.appendChild(stylingContainer);
    stylingContainer.appendChild(title);
-   stylingContainer.appendChild(divider);
+   stylingContainer.appendChild(weatherImg);
    stylingContainer.appendChild(temp);
    stylingContainer.appendChild(feelsLike);
    stylingContainer.appendChild(weatherCondition);
@@ -98,4 +147,13 @@ button?.addEventListener('click', () => {
    const city = input.value;
    geolocationApiUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${city}&sort=population&limit=5&appid=${apiKey}&units=imperial`;
    getGeoLocation();
+})
+
+
+input.addEventListener('keypress', (event) => {
+   if(input.value !== "" && event.keyCode === 13){
+      const city = input.value;
+      geolocationApiUrl = `http://api.openweathermap.org/geo/1.0/direct?q=${city}&sort=population&limit=5&appid=${apiKey}&units=imperial`;
+      getGeoLocation();
+  }
 })
