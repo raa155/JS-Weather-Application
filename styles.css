@@ -4,6 +4,8 @@
    box-sizing: border-box;
 }
 
+
+
 .header {
    width:100%;
    height:auto;
@@ -66,6 +68,8 @@
    align-items: center;
    justify-content: center;
    z-index:1;
+   background-size: cover;
+   background-repeat: no-repeat;
 }
 
 .weather-results-container h2{
@@ -88,6 +92,8 @@
    border-radius: 9px;
    width:100%;
    max-width:800px;
+   background: white;
+   opacity: 80%;
 }
 
 .weather-img {

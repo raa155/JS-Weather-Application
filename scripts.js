@@ -11,6 +11,11 @@ const apiKey = '4be0cf04eed25e997c6aed659cc1d3d3';
 const googleApiKey = 'AIzaSyDIDISCV_kKELLLvZrUg8ReJTTrpLtdtQY';
 let geolocationApiUrl = '';
 
+
+
+
+
+
 // Get Picture from Google API Place and return a src
 const getCityPictures = async (city) => {
    try {
@@ -24,29 +29,6 @@ const getCityPictures = async (city) => {
       console.log(error);
    }
 }
-
-// Get src from photoReference
-
-const getPictureSrc = async () => {
-   try {
-      let reference = await getCityPictures('london');
-      console.log(reference)
-      const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-      const googleSrcUrl = `https://maps.googleapis.com/maps/api/place/photo?photoreference=${reference}&key=${googleApiKey}&maxwidth=400&maxheight=400`;
-      console.log(proxyUrl + googleSrcUrl);
-      const response = await fetch(proxyUrl + googleSrcUrl);
-      const img = document.createElement('img');
-      img.setAttribute('src', response);
-      
-   } catch (error) {
-       console.log(error)
-   }
-      
-}
-
-
-
-
 
 // Fetch GeoLocation Information based off the city entered by user. 
 const getGeoLocation = async () => {
@@ -80,10 +62,16 @@ const getWeather = async (lon, lat) => {
 }
 
 //Display Weather Information
-const displayWeather = (weatherData) => {
+const displayWeather = async (weatherData) => {
+   //get photo depending on the city searched and set it as the background of the container
+   let reference = await getCityPictures(weatherData.name);
+   console.log(reference)
+   const googleSrcUrl = `https://maps.googleapis.com/maps/api/place/photo?photoreference=${reference}&key=${googleApiKey}&maxwidth=3840&maxheight=2160`;
+   console.log(googleSrcUrl)
    //create Weather Div
    container = document.createElement('div');
-   container.classList.add('weather-results-container')
+   container.classList.add('weather-results-container');
+   container.style.backgroundImage = `url(${googleSrcUrl})`;
    //create styling container div
    const stylingContainer = document.createElement('div');
    stylingContainer.classList.add('styling-weather-results-container');
