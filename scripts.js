@@ -37,7 +37,6 @@ const getGeoLocation = async () => {
    try {
       const response = await fetch(geolocationApiUrl);
       const geoLocation = await response.json();
-      console.log(geoLocation)
       let lon = geoLocation[0].lon;
       let lat = geoLocation[0].lat;
       getWeather(lon, lat)
@@ -53,7 +52,6 @@ const getWeather = async (lon, lat) => {
    try {
       const response = await fetch(weatherApiUrl);
       const weatherData = await response.json();
-      console.log(weatherData);
       displayWeather(weatherData);
    } catch (error) {
       console.log(error);
@@ -65,9 +63,8 @@ const getWeather = async (lon, lat) => {
 const displayWeather = async (weatherData) => {
    //get photo depending on the city searched and set it as the background of the container
    let reference = await getCityPictures(weatherData.name);
-   console.log(reference)
    const googleSrcUrl = `https://maps.googleapis.com/maps/api/place/photo?photoreference=${reference}&key=${googleApiKey}&maxwidth=3840&maxheight=2160`;
-   console.log(googleSrcUrl)
+
    //create Weather Div
    container = document.createElement('div');
    container.classList.add('weather-results-container');
@@ -98,17 +95,17 @@ const displayWeather = async (weatherData) => {
    weatherImg.classList.add('weather-img')
 
    if (weatherData.weather[0].description.includes('sun')) {
-      weatherImg.setAttribute('src', '/img/sun.gif')
+      weatherImg.setAttribute('src', './img/sun.gif')
    } else if (weatherData.weather[0].description.includes('snow')) {
-      weatherImg.setAttribute('src', '/img/snow.gif')
+      weatherImg.setAttribute('src', './img/snow.gif')
    } else if (weatherData.weather[0].description.includes('clouds')) {
-      weatherImg.setAttribute('src', '/img/clouds.gif')
+      weatherImg.setAttribute('src', './img/clouds.gif')
    } else if (weatherData.weather[0].description.includes('rain')) {
-      weatherImg.setAttribute('src', '/img/rain.gif')
+      weatherImg.setAttribute('src', './img/rain.gif')
    } else if (weatherData.weather[0].description.includes('clear')) {
-      weatherImg.setAttribute('src', '/img/clearsky.png')
+      weatherImg.setAttribute('src', './img/clearsky.png')
    } else if (weatherData.weather[0].description.includes('mist')) {
-      weatherImg.setAttribute('src', '/img/mist.gif')
+      weatherImg.setAttribute('src', './img/mist.gif')
    } 
    // Add the Elements inside container Element
    weatherContainer.appendChild(container);
